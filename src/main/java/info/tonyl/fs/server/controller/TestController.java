@@ -3,6 +3,8 @@ package info.tonyl.fs.server.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,8 +29,13 @@ public class TestController {
 
 	@PostMapping("remember")
 	public ResponseEntity<Response> remember(@RequestBody RememberRequest req) {
+		String message = req.getMessage();
+		if (message == null) {
+			message = "";
+		}
+
 		Memory m = new Memory();
-		m.setMessage(req.getMessage());
+		m.setMessage(message);
 		m = memoryRepo.save(m);
 
 		StringBuilder sb = new StringBuilder();
@@ -51,9 +58,13 @@ public class TestController {
 		}
 	}
 
-	@GetMapping("error")
-	public ResponseEntity<Response> error() {
-		return ResponseUtil.build(HttpStatus.INTERNAL_SERVER_ERROR, "This is an example error.",
-				new Exception("Example exception message."));
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<Response> error(HttpMessageNotReadableException ex) {
+		return ResponseUtil.build(HttpStatus.BAD_REQUEST, "The request could not be read.", ex);
+	}
+
+	@ExceptionHandler(Throwable.class)
+	public ResponseEntity<Response> error(Throwable t) {
+		return ResponseUtil.build(HttpStatus.INTERNAL_SERVER_ERROR, "An error was encountered.", t);
 	}
 }

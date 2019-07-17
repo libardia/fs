@@ -1,4 +1,9 @@
 spring:
+  h2:
+    console:
+      enabled: true
   http:
     converters:
       preferred-json-mapper: gson
+  datasource:
+    url: jdbc:h2:mem:test
