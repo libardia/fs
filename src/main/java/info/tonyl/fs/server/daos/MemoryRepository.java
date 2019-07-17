@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import info.tonyl.fs.server.models.Memory;
 
 @Repository
-public interface MemoryRepo extends CrudRepository<Memory, Long> {
+public interface MemoryRepository extends CrudRepository<Memory, Long> {
 	@SuppressWarnings("unchecked")
 	public Memory save(Memory m);
 
