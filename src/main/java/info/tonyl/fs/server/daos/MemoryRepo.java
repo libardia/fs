@@ -7,6 +7,7 @@ import info.tonyl.fs.server.models.Memory;
 
 @Repository
 public interface MemoryRepo extends CrudRepository<Memory, Long> {
+	@SuppressWarnings("unchecked")
 	public Memory save(Memory m);
 
 	public Memory getById(Long id);
