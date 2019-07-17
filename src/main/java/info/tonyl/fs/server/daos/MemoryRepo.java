@@ -1,5 +1,7 @@
 package info.tonyl.fs.server.daos;
 
+import java.util.UUID;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +12,5 @@ public interface MemoryRepo extends CrudRepository<Memory, Long> {
 	@SuppressWarnings("unchecked")
 	public Memory save(Memory m);
 
-	public Memory getById(Long id);
+	public Memory getByKey(UUID key);
 }

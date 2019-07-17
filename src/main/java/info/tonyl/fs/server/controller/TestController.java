@@ -1,5 +1,7 @@
 package info.tonyl.fs.server.controller;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,17 +43,17 @@ public class TestController {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Ok, I've remembered \"");
 		sb.append(m.getMessage());
-		sb.append("\". It's ID is ");
-		sb.append(m.getId());
+		sb.append("\". It's key is ");
+		sb.append(m.getKey());
 		sb.append(".");
 
 		return ResponseUtil.build(sb.toString());
 	}
 
 	@GetMapping("recall/{id}")
-	public ResponseEntity<Response> recall(@PathVariable Long id) {
+	public ResponseEntity<Response> recall(@PathVariable UUID id) {
 		try {
-			Memory m = memoryRepo.getById(id);
+			Memory m = memoryRepo.getByKey(id);
 			return ResponseUtil.build(m.getMessage());
 		} catch (Exception e) {
 			return ResponseUtil.build(HttpStatus.INTERNAL_SERVER_ERROR, "Error while retrieving memory", e);
