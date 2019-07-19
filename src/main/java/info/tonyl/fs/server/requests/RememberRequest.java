@@ -1,4 +1,4 @@
-package info.tonyl.fs.server.models;
+package info.tonyl.fs.server.requests;
 
 import lombok.Data;
 
