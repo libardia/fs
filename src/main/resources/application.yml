@@ -1,6 +1,4 @@
 spring:
-  server:
-    port: 8081
   servlet:
     multipart:
       max-file-size: 10GB
@@ -16,3 +14,5 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+server:
+  port: 80
