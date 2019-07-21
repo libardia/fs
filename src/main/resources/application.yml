@@ -1,6 +1,6 @@
 spring:
   server:
-    port: 80
+    port: 8081
   servlet:
     multipart:
       max-file-size: 10GB
