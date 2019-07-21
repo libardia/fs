@@ -1,10 +1,17 @@
 package info.tonyl.fs.server.controller;
 
 import java.io.IOException;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -15,14 +22,16 @@ import org.springframework.web.multipart.MultipartFile;
 import info.tonyl.fs.server.daos.StoredFileRepository;
 import info.tonyl.fs.server.models.StoredFile;
 import info.tonyl.fs.server.responses.ErrorResponse;
+import info.tonyl.fs.server.responses.FileDetailsResponse;
 import info.tonyl.fs.server.responses.UploadResponse;
+import javassist.NotFoundException;
 
 @RestController
 public class FileController {
 	@Autowired
 	private StoredFileRepository sfRepo;
 
-	@PostMapping("/upload")
+	@PostMapping("upload")
 	public UploadResponse uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
 		StoredFile sf = new StoredFile();
 		sf.setName(file.getOriginalFilename());
@@ -31,6 +40,29 @@ public class FileController {
 		sf.setData(file.getBytes());
 		sf = sfRepo.save(sf);
 		return new UploadResponse(sf.getId());
+	}
+
+	@GetMapping("download/{id}")
+	public ResponseEntity<byte[]> download(@PathVariable String id) throws NotFoundException {
+		UUID uuid = UUID.fromString(id);
+		Optional<StoredFile> osf = sfRepo.findById(uuid);
+		if (!osf.isPresent()) {
+			throw new NotFoundException("No entry for UUID " + id);
+		}
+		StoredFile sf = osf.get();
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + sf.getName() + "\"")
+				.contentType(MediaType.parseMediaType(sf.getType())).body(sf.getData());
+	}
+
+	@GetMapping("file-details/{id}")
+	public FileDetailsResponse fileDetails(@PathVariable String id) throws NotFoundException {
+		UUID uuid = UUID.fromString(id);
+		Optional<StoredFile> osf = sfRepo.findById(uuid);
+		if (!osf.isPresent()) {
+			throw new NotFoundException("No entry for UUID " + id);
+		}
+		return new FileDetailsResponse(osf.get());
 	}
 
 	@ExceptionHandler(IOException.class)

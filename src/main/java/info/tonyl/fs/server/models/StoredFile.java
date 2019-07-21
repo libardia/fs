@@ -20,7 +20,7 @@ public class StoredFile {
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	@Setter(AccessLevel.NONE)
-	UUID id;
+	private UUID id;
 
 	private String name;
 	private String type;
