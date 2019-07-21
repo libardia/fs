@@ -2,7 +2,7 @@
 
 hostname=localhost:8080
 
-name=`curl -s $hostname/file-details/$1 | jq -r .name`
+name=`curl -s $hostname/file-details/$1 | ../bin/jq -r .name`
 curl $hostname/download/$1 -o $name
 echo
 echo Downloaded $name
