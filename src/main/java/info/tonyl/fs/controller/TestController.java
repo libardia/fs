@@ -1,4 +1,4 @@
-package info.tonyl.fs.server.controller;
+package info.tonyl.fs.controller;
 
 import java.util.UUID;
 
@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import info.tonyl.fs.server.daos.MemoryRepository;
-import info.tonyl.fs.server.models.Memory;
-import info.tonyl.fs.server.requests.RememberRequest;
-import info.tonyl.fs.server.responses.SimpleResponse;
-import info.tonyl.fs.server.responses.UploadResponse;
+import info.tonyl.fs.daos.MemoryRepository;
+import info.tonyl.fs.models.Memory;
+import info.tonyl.fs.requests.RememberRequest;
+import info.tonyl.fs.responses.SimpleResponse;
+import info.tonyl.fs.responses.UploadResponse;
 import javassist.NotFoundException;
 
 @RestController

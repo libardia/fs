@@ -1,6 +1,6 @@
-package info.tonyl.fs.server.responses;
+package info.tonyl.fs.responses;
 
-import info.tonyl.fs.server.models.StoredFile;
+import info.tonyl.fs.models.StoredFile;
 import lombok.Data;
 
 @Data

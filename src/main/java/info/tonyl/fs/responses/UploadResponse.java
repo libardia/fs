@@ -1,4 +1,4 @@
-package info.tonyl.fs.server.responses;
+package info.tonyl.fs.responses;
 
 import java.util.UUID;
 

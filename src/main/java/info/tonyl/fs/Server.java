@@ -1,4 +1,4 @@
-package info.tonyl.fs.server;
+package info.tonyl.fs;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package info.tonyl.fs.server.controller;
+package info.tonyl.fs.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import info.tonyl.fs.server.responses.ErrorResponse;
+import info.tonyl.fs.responses.ErrorResponse;
 import javassist.NotFoundException;
 
 @ControllerAdvice
