@@ -1,12 +1,12 @@
 package info.tonyl.fs.controller;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,9 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import info.tonyl.fs.daos.StoredFileDao;
 import info.tonyl.fs.models.StoredFile;
-import info.tonyl.fs.repos.StoredFileRepository;
+import info.tonyl.fs.repos.StoredFileRepo;
 import info.tonyl.fs.responses.ErrorResponse;
-import info.tonyl.fs.responses.FileDetailsResponse;
 import info.tonyl.fs.responses.ListResponse;
 import info.tonyl.fs.responses.SimpleResponse;
 import info.tonyl.fs.responses.UploadResponse;
@@ -38,7 +37,7 @@ public class FileController {
 	private StoredFileDao sfDao;
 
 	@Autowired
-	private StoredFileRepository sfRepo;
+	private StoredFileRepo sfRepo;
 
 	@GetMapping("truncate")
 	public SimpleResponse truncate() {
@@ -52,9 +51,9 @@ public class FileController {
 	}
 
 	@PostMapping("upload")
-	public UploadResponse uploadFile(@RequestParam("file") MultipartFile file)
-			throws NoSuchAlgorithmException, IOException {
-		StoredFile sf = sfDao.saveNew(file);
+	public UploadResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path)
+			throws IOException {
+		StoredFile sf = sfDao.saveNew(file, path);
 		return new UploadResponse(sf.getId());
 	}
 
@@ -66,19 +65,20 @@ public class FileController {
 			throw new NotFoundException("No entry for ID " + id);
 		}
 		StoredFile sf = osf.get();
-		InputStreamResource file = new InputStreamResource(sf.getData().getBinaryStream());
+		Path actualPath = sfDao.getActualPath(sf);
+		FileSystemResource file = new FileSystemResource(actualPath.toFile());
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + sf.getName() + "\"")
 				.contentType(MediaType.APPLICATION_OCTET_STREAM).contentLength(sf.getSize()).body(file);
 	}
 
 	@GetMapping("file-details/{id}")
-	public FileDetailsResponse fileDetails(@PathVariable String id) throws NotFoundException {
+	public StoredFile fileDetails(@PathVariable String id) throws NotFoundException {
 		Optional<StoredFile> osf = sfRepo.findById(id);
 		if (!osf.isPresent()) {
 			throw new NotFoundException("No entry for ID " + id);
 		}
-		return new FileDetailsResponse(osf.get());
+		return osf.get();
 	}
 
 	@ExceptionHandler(IOException.class)

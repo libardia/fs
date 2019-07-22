@@ -10,7 +10,12 @@ spring:
     converters:
       preferred-json-mapper: gson
   datasource:
-    url: jdbc:h2:~/db/test
+    url: jdbc:h2:~/fs/db/test
   jpa:
     hibernate:
       ddl-auto: update
+fs:
+  storage:
+    id-length: 10
+    base-path: C:\\Users\\09227968\\fs\\data
+    buffer-size: 10240

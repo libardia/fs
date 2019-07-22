@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import info.tonyl.fs.models.StoredFile;
 
 @Repository
-public interface StoredFileRepository extends CrudRepository<StoredFile, String> {
+public interface StoredFileRepo extends CrudRepository<StoredFile, String> {
 }

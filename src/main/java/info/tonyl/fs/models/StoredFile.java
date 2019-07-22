@@ -1,10 +1,7 @@
 package info.tonyl.fs.models;
 
-import java.sql.Blob;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 
 import lombok.Data;
 
@@ -13,10 +10,7 @@ import lombok.Data;
 public class StoredFile {
 	@Id
 	private String id;
+	private String path;
 	private String name;
 	private Long size;
-	private String hash;
-
-	@Lob
-	private Blob data;
 }

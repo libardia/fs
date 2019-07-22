@@ -12,9 +12,9 @@ public class ListResponse {
 		files = new ArrayList<>();
 
 		for (StoredFile sf : filesIter) {
-			files.add(new FileDetailsResponse(sf));
+			files.add(sf);
 		}
 	}
 
-	private List<FileDetailsResponse> files;
+	private List<StoredFile> files;
 }
