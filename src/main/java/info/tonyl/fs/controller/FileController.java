@@ -2,10 +2,12 @@ package info.tonyl.fs.controller;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,15 +59,17 @@ public class FileController {
 	}
 
 	@GetMapping("download/{id}")
-	public ResponseEntity<Blob> download(@PathVariable String id) throws NotFoundException {
+	public ResponseEntity<Resource> download(@PathVariable String id)
+			throws NotFoundException, SQLException, IOException {
 		Optional<StoredFile> osf = sfRepo.findById(id);
 		if (!osf.isPresent()) {
 			throw new NotFoundException("No entry for ID " + id);
 		}
 		StoredFile sf = osf.get();
+		InputStreamResource file = new InputStreamResource(sf.getData().getBinaryStream());
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + sf.getName() + "\"")
-				.contentType(MediaType.APPLICATION_OCTET_STREAM).contentLength(sf.getSize()).body(sf.getData());
+				.contentType(MediaType.APPLICATION_OCTET_STREAM).contentLength(sf.getSize()).body(file);
 	}
 
 	@GetMapping("file-details/{id}")

@@ -53,14 +53,12 @@ public class StoredFileDao {
 		}
 
 		// Save the hash string as base 64
-		String hashB64 = Base64.getEncoder().encodeToString(hashed);
+		String hashB64 = Base64.getUrlEncoder().encodeToString(hashed);
 		sf.setHash(hashB64);
 
-		// Hash again, salting it with the name. The resulting base64 is considered
-		// "unsafe" because it may include "/".
+		// Hash again, salting it with the name.
 		hashed = digest.digest((hashB64 + sf.getName()).getBytes());
-		String unsafeId = Base64.getEncoder().encodeToString(hashed).substring(0, 9);
-		String id = unsafeId.replace('/', '-');
+		String id = Base64.getUrlEncoder().encodeToString(hashed).substring(0, 9);
 		sf.setId(id);
 
 		// Finally, save it. ALL OF THIS is done so the ID can be the same between files
