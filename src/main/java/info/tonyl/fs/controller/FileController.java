@@ -25,6 +25,8 @@ import info.tonyl.fs.models.StoredFile;
 import info.tonyl.fs.repos.StoredFileRepository;
 import info.tonyl.fs.responses.ErrorResponse;
 import info.tonyl.fs.responses.FileDetailsResponse;
+import info.tonyl.fs.responses.ListResponse;
+import info.tonyl.fs.responses.SimpleResponse;
 import info.tonyl.fs.responses.UploadResponse;
 import javassist.NotFoundException;
 
@@ -35,6 +37,17 @@ public class FileController {
 
 	@Autowired
 	private StoredFileRepository sfRepo;
+
+	@GetMapping("truncate")
+	public SimpleResponse truncate() {
+		sfRepo.deleteAll();
+		return new SimpleResponse("It is done.");
+	}
+
+	@GetMapping("list")
+	public ListResponse list() {
+		return new ListResponse(sfRepo.findAll());
+	}
 
 	@PostMapping("upload")
 	public UploadResponse uploadFile(@RequestParam("file") MultipartFile file)
