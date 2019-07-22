@@ -1,7 +1,6 @@
 package info.tonyl.fs.daos;
 
 import java.io.IOException;
-import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
@@ -37,27 +36,8 @@ public class StoredFileDao {
 		Blob data = session.getLobHelper().createBlob(file.getInputStream(), file.getSize());
 		sf.setData(data);
 
-		// Hash the file contents
-		MessageDigest digest = MessageDigest.getInstance("SHA-256");
-		byte[] hashed;
-		// Try-with-resources; we can be sure dStream is closed.
-		try (DigestInputStream dStream = new DigestInputStream(file.getInputStream(), digest)) {
-			// 4KB at a time, read out the contents so the digest is updated.
-			byte[] buffer = new byte[4096];
-			int read;
-			do {
-				read = dStream.read(buffer);
-			} while (read > 0);
-			// Retrieve the calculated digest.
-			hashed = dStream.getMessageDigest().digest();
-		}
-
-		// Save the hash string as base 64
-		String hashB64 = Base64.getUrlEncoder().encodeToString(hashed);
-		sf.setHash(hashB64);
-
-		// Hash again, salting it with the name.
-		hashed = digest.digest((hashB64 + sf.getName()).getBytes());
+		// Hash the file name
+		byte[] hashed = MessageDigest.getInstance("SHA-256").digest(file.getName().getBytes());
 		String id = Base64.getUrlEncoder().encodeToString(hashed).substring(0, 9);
 		sf.setId(id);
 
