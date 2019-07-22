@@ -8,6 +8,7 @@ public class ErrorResponse {
 		this.message = message;
 		exceptionMessage = t.getLocalizedMessage();
 		type = t.getClass().getName();
+		t.printStackTrace();
 	}
 
 	private String message;

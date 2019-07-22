@@ -56,14 +56,15 @@ public class StoredFileDao {
 		String hashB64 = Base64.getEncoder().encodeToString(hashed);
 		sf.setHash(hashB64);
 
-		// Hash again, salting it with the name
+		// Hash again, salting it with the name. The resulting base64 is considered
+		// "unsafe" because it may include "/".
 		hashed = digest.digest((hashB64 + sf.getName()).getBytes());
+		String unsafeId = Base64.getEncoder().encodeToString(hashed).substring(0, 9);
+		String id = unsafeId.replace('/', '-');
+		sf.setId(id);
 
 		// Finally, save it. ALL OF THIS is done so the ID can be the same between files
 		// with the same contents AND name. Only the last 10 digits are used as the ID.
-		String id = Base64.getEncoder().encodeToString(hashed).substring(0, 9);
-		sf.setId(id);
-
 		sf = sfRepo.save(sf);
 
 		return sf;
