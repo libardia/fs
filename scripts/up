@@ -2,6 +2,7 @@
 
 hostname=localhost:8080
 
-id=`curl -F "file=@$1" $hostname/upload | ../bin/jq -r .id`
+resp=`curl -NF "file=@$1" $hostname/upload`
 echo
-echo ID of uploaded file is: $id
+echo $resp | ../bin/jq .
+

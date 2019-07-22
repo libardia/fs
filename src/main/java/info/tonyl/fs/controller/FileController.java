@@ -1,10 +1,11 @@
 package info.tonyl.fs.controller;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,35 +33,35 @@ public class FileController {
 	private StoredFileRepository sfRepo;
 
 	@PostMapping("upload")
-	public UploadResponse uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+	public UploadResponse uploadFile(@RequestParam("file") MultipartFile file) throws NoSuchAlgorithmException {
+
 		StoredFile sf = new StoredFile();
 		sf.setName(file.getOriginalFilename());
-		sf.setType(file.getContentType());
 		sf.setSize(file.getSize());
-		sf.setData(file.getBytes());
+		sf.setData(file.getResource());
+		sf.generateOwnId();
 		sf = sfRepo.save(sf);
+
 		return new UploadResponse(sf.getId());
 	}
 
 	@GetMapping("download/{id}")
-	public ResponseEntity<byte[]> download(@PathVariable String id) throws NotFoundException {
-		UUID uuid = UUID.fromString(id);
-		Optional<StoredFile> osf = sfRepo.findById(uuid);
+	public ResponseEntity<Resource> download(@PathVariable String id) throws NotFoundException {
+		Optional<StoredFile> osf = sfRepo.findById(id);
 		if (!osf.isPresent()) {
-			throw new NotFoundException("No entry for UUID " + id);
+			throw new NotFoundException("No entry for ID " + id);
 		}
 		StoredFile sf = osf.get();
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + sf.getName() + "\"")
-				.contentType(MediaType.parseMediaType(sf.getType())).body(sf.getData());
+				.contentType(MediaType.APPLICATION_OCTET_STREAM).contentLength(sf.getSize()).body(sf.getData());
 	}
 
 	@GetMapping("file-details/{id}")
 	public FileDetailsResponse fileDetails(@PathVariable String id) throws NotFoundException {
-		UUID uuid = UUID.fromString(id);
-		Optional<StoredFile> osf = sfRepo.findById(uuid);
+		Optional<StoredFile> osf = sfRepo.findById(id);
 		if (!osf.isPresent()) {
-			throw new NotFoundException("No entry for UUID " + id);
+			throw new NotFoundException("No entry for ID " + id);
 		}
 		return new FileDetailsResponse(osf.get());
 	}
