@@ -20,8 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
-import info.tonyl.fs.daos.StoredFileRepository;
+import info.tonyl.fs.daos.StoredFileDao;
 import info.tonyl.fs.models.StoredFile;
+import info.tonyl.fs.repos.StoredFileRepository;
 import info.tonyl.fs.responses.ErrorResponse;
 import info.tonyl.fs.responses.FileDetailsResponse;
 import info.tonyl.fs.responses.UploadResponse;
@@ -30,23 +31,20 @@ import javassist.NotFoundException;
 @RestController
 public class FileController {
 	@Autowired
+	private StoredFileDao sfDao;
+
+	@Autowired
 	private StoredFileRepository sfRepo;
 
 	@PostMapping("upload")
-	public UploadResponse uploadFile(@RequestParam("file") MultipartFile file) throws NoSuchAlgorithmException {
-
-		StoredFile sf = new StoredFile();
-		sf.setName(file.getOriginalFilename());
-		sf.setSize(file.getSize());
-		sf.setData(file.getResource());
-		sf.generateOwnId();
-		sf = sfRepo.save(sf);
-
+	public UploadResponse uploadFile(@RequestParam("file") MultipartFile file)
+			throws NoSuchAlgorithmException, IOException {
+		StoredFile sf = sfDao.saveNew(file);
 		return new UploadResponse(sf.getId());
 	}
 
 	@GetMapping("download/{id}")
-	public ResponseEntity<Resource> download(@PathVariable String id) throws NotFoundException {
+	public ResponseEntity<byte[]> download(@PathVariable String id) throws NotFoundException {
 		Optional<StoredFile> osf = sfRepo.findById(id);
 		if (!osf.isPresent()) {
 			throw new NotFoundException("No entry for ID " + id);
