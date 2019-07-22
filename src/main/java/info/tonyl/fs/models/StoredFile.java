@@ -1,5 +1,7 @@
 package info.tonyl.fs.models;
 
+import java.sql.Blob;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
@@ -16,5 +18,5 @@ public class StoredFile {
 	private String hash;
 
 	@Lob
-	private byte[] data;
+	private Blob data;
 }

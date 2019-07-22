@@ -2,10 +2,10 @@ package info.tonyl.fs.controller;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Blob;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,7 +44,7 @@ public class FileController {
 	}
 
 	@GetMapping("download/{id}")
-	public ResponseEntity<byte[]> download(@PathVariable String id) throws NotFoundException {
+	public ResponseEntity<Blob> download(@PathVariable String id) throws NotFoundException {
 		Optional<StoredFile> osf = sfRepo.findById(id);
 		if (!osf.isPresent()) {
 			throw new NotFoundException("No entry for ID " + id);
