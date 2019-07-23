@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.security.MessageDigest;
+import java.time.OffsetDateTime;
 import java.util.Base64.Encoder;
 
 import javax.persistence.EntityManager;
@@ -16,8 +17,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import info.tonyl.fs.config.Config;
+import info.tonyl.fs.exceptions.FileExistsException;
 import info.tonyl.fs.models.StoredFile;
 import info.tonyl.fs.repos.StoredFileRepo;
+import info.tonyl.fs.util.Util;
 
 @Component
 public class StoredFileDao {
@@ -48,6 +51,7 @@ public class StoredFileDao {
 		sf.setName(fullPath.getFileName().toString());
 		sf.setPath(semiPath.toString());
 		sf.setSize(file.getSize());
+		sf.setStored(OffsetDateTime.now().toString());
 
 		// Make the ID based on the full path of the file (so we can't overwrite)
 		byte[] nameHash = digest.digest(fullPath.toString().getBytes());
@@ -62,7 +66,7 @@ public class StoredFileDao {
 		File actualFile = actualPath.toFile();
 		actualFile.getParentFile().mkdirs();
 		if (!actualFile.createNewFile()) {
-			throw new IOException("File already exists");
+			throw new FileExistsException("File at " + fullPath.toString() + " already exists");
 		}
 		try (FileOutputStream out = new FileOutputStream(actualPath.toFile())) {
 			while (in.read(buffer) > 0) {
@@ -74,9 +78,15 @@ public class StoredFileDao {
 		return sf;
 	}
 
+	public void deleteAll() {
+		sfRepo.deleteAll();
+		Util.deleteDirectory(config.getBasePath().toFile());
+	}
+
 	public Path getActualPath(StoredFile sf) {
 		Path base = config.getBasePath();
 		Path full = base.resolve(sf.getPath()).resolve(sf.getName());
 		return full.normalize();
 	}
+
 }

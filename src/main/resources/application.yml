@@ -17,5 +17,5 @@ spring:
 fs:
   storage:
     id-length: 10
-    base-path: C:\\Users\\09227968\\fs\\data
+    base-path: fs\\data
     buffer-size: 10240

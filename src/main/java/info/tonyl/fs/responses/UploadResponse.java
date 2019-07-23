@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class UploadResponse {
 	public UploadResponse(String id) {
-		message = "Successfully stored file in database";
+		message = "Successfully uploaded file";
 		this.id = id;
 	}
 
