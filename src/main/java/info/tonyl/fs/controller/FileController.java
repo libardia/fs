@@ -3,7 +3,6 @@ package info.tonyl.fs.controller;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -25,40 +24,27 @@ import org.springframework.web.multipart.MultipartFile;
 import info.tonyl.fs.daos.StoredFileDao;
 import info.tonyl.fs.exceptions.FileExistsException;
 import info.tonyl.fs.models.StoredFile;
-import info.tonyl.fs.repos.StoredFileRepo;
 import info.tonyl.fs.responses.ErrorResponse;
 import info.tonyl.fs.responses.ListResponse;
 import info.tonyl.fs.responses.SimpleResponse;
-import info.tonyl.fs.responses.UploadResponse;
 
 @RestController
 public class FileController {
 	@Autowired
 	private StoredFileDao sfDao;
 
-	@Autowired
-	private StoredFileRepo sfRepo;
-
-	@GetMapping("truncate")
-	public SimpleResponse truncate() {
-		sfDao.deleteAll();
-		return new SimpleResponse("It is done.");
-	}
-
 	@GetMapping("list")
 	public ListResponse list() {
-		return new ListResponse(sfRepo.findAll());
+		return new ListResponse(sfDao.getAll());
 	}
 
 	@PostMapping("upload")
-	public UploadResponse uploadFile(@RequestParam("file") MultipartFile file,
+	public StoredFile uploadFile(@RequestParam("file") MultipartFile file,
 			@RequestParam(value = "path", required = false) String path) throws IOException {
 		if (path == null) {
 			path = "";
 		}
-
-		StoredFile sf = sfDao.saveNew(file, path);
-		return new UploadResponse(sf.getId());
+		return sfDao.saveNew(file, path);
 	}
 
 	@ExceptionHandler(FileExistsException.class)
@@ -69,11 +55,10 @@ public class FileController {
 
 	@GetMapping("download/{id}")
 	public ResponseEntity<Resource> download(@PathVariable String id) throws FileNotFoundException {
-		Optional<StoredFile> osf = sfRepo.findById(id);
-		if (!osf.isPresent()) {
+		StoredFile sf = sfDao.get(id);
+		if (sf == null) {
 			throw new FileNotFoundException("No entry for ID " + id);
 		}
-		StoredFile sf = osf.get();
 		Path actualPath = sfDao.getActualPath(sf);
 		FileSystemResource file = new FileSystemResource(actualPath.toFile());
 		return ResponseEntity.ok()
@@ -83,11 +68,28 @@ public class FileController {
 
 	@GetMapping("file-details/{id}")
 	public StoredFile fileDetails(@PathVariable String id) throws FileNotFoundException {
-		Optional<StoredFile> osf = sfRepo.findById(id);
-		if (!osf.isPresent()) {
+		StoredFile sf = sfDao.get(id);
+		if (sf == null) {
 			throw new FileNotFoundException("No entry for ID " + id);
 		}
-		return osf.get();
+		return sf;
+	}
+
+	@GetMapping("deleteAll")
+	public SimpleResponse deleteAll() {
+		sfDao.deleteAll();
+		return new SimpleResponse("It is done.");
+	}
+
+	@GetMapping("delete/{id}")
+	public SimpleResponse delete(@PathVariable String id) {
+		String message;
+		if (sfDao.delete(id)) {
+			message = "Successfully deleted file with ID " + id;
+		} else {
+			message = "There was no file with ID " + id;
+		}
+		return new SimpleResponse(message);
 	}
 
 	@ExceptionHandler(FileNotFoundException.class)

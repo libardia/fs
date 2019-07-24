@@ -6,11 +6,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Base64.Encoder;
-
-import javax.persistence.EntityManager;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,19 +27,16 @@ import info.tonyl.fs.util.Util;
 @Component
 public class StoredFileDao {
 	@Autowired
-	StoredFileRepo sfRepo;
+	private StoredFileRepo sfRepo;
 
 	@Autowired
-	EntityManager entityManager;
+	private Config config;
 
 	@Autowired
-	Config config;
+	private Encoder encoder;
 
 	@Autowired
-	Encoder encoder;
-
-	@Autowired
-	MessageDigest digest;
+	private MessageDigest digest;
 
 	public StoredFile saveNew(MultipartFile file, String path) throws IOException {
 		StoredFile sf = new StoredFile();
@@ -46,6 +45,9 @@ public class StoredFileDao {
 		Path semiPath = FileSystems.getDefault().getPath(path).normalize();
 		Path fullPath = semiPath.resolve(file.getOriginalFilename()).normalize();
 		Path actualPath = config.getBasePath().resolve(fullPath).normalize();
+		if (actualPath.toFile().exists()) {
+			throw new FileExistsException("File at " + fullPath.toString() + " already exists");
+		}
 
 		// Set all the simple fields
 		sf.setName(fullPath.getFileName().toString());
@@ -57,22 +59,25 @@ public class StoredFileDao {
 		byte[] nameHash = digest.digest(fullPath.toString().getBytes());
 		sf.setId(encoder.encodeToString(nameHash).substring(0, config.getIdLength() - 1));
 
-		// Store it in the database
-		sf = sfRepo.save(sf);
-
-		// Write the actual file to the filesystem
+		// Write the actual file to the file system, and at the same time calculate the
+		// hash
 		InputStream in = file.getInputStream();
 		byte[] buffer = new byte[config.getBufferSize()];
 		File actualFile = actualPath.toFile();
-		actualFile.getParentFile().mkdirs();
-		if (!actualFile.createNewFile()) {
-			throw new FileExistsException("File at " + fullPath.toString() + " already exists");
-		}
-		try (FileOutputStream out = new FileOutputStream(actualPath.toFile())) {
+		Util.createFile(actualFile);
+		try (DigestOutputStream out = new DigestOutputStream(new FileOutputStream(actualPath.toFile()), digest)) {
 			while (in.read(buffer) > 0) {
 				out.write(buffer);
 			}
+
+			// Save the hash
+			out.on(false);
+			byte[] hash = out.getMessageDigest().digest();
+			sf.setHash(encoder.encodeToString(hash));
 		}
+
+		// Store it in the database
+		sf = sfRepo.save(sf);
 
 		// Return what we just stored
 		return sf;
@@ -83,10 +88,37 @@ public class StoredFileDao {
 		Util.deleteDirectory(config.getBasePath().toFile());
 	}
 
+	public boolean delete(String id) {
+		StoredFile sf = get(id);
+		boolean actuallyDeleted = false;
+		if (sf != null) {
+			actuallyDeleted = getActualPath(sf).toFile().delete();
+		}
+		sfRepo.deleteById(id);
+		return actuallyDeleted;
+	}
+
+	public StoredFile get(String id) {
+		Optional<StoredFile> osf = sfRepo.findById(id);
+		if (osf.isPresent()) {
+			return osf.get();
+		} else {
+			return null;
+		}
+	}
+
+	public List<StoredFile> getAll() {
+		List<StoredFile> result = new ArrayList<>();
+		Iterable<StoredFile> it = sfRepo.findAll();
+		for (StoredFile sf : it) {
+			result.add(sf);
+		}
+		return result;
+	}
+
 	public Path getActualPath(StoredFile sf) {
 		Path base = config.getBasePath();
 		Path full = base.resolve(sf.getPath()).resolve(sf.getName());
 		return full.normalize();
 	}
-
 }

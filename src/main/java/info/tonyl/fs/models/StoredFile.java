@@ -14,4 +14,5 @@ public class StoredFile {
 	private String name;
 	private Long size;
 	private String stored;
+	private String hash;
 }
