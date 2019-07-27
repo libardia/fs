@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:h2:~/fs/prod/prod
+fs:
+  storage:
+    base-path: fs\\prod\\data
