@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:~/fs/dev/dev
+    url: jdbc:h2:${fs.storage.base-path}/dev/dev
 fs:
   storage:
-    base-path: fs\\dev\\data
+    data-path: dev\\data

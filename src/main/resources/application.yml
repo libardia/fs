@@ -12,11 +12,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-  security:
-    user:
-      name: tonyl
-      password: test
 fs:
   storage:
     id-length: 10
+    base-path: ${user.home}/fs
     buffer-size: 10240

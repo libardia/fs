@@ -44,7 +44,7 @@ public class StoredFileDao {
 		// Build partial and full paths, and make sure they're sensible (normalized)
 		Path semiPath = FileSystems.getDefault().getPath(path).normalize();
 		Path fullPath = semiPath.resolve(file.getOriginalFilename()).normalize();
-		Path actualPath = config.getBasePath().resolve(fullPath).normalize();
+		Path actualPath = config.getBasePath().resolve(config.getDataPath()).resolve(fullPath).normalize();
 		if (actualPath.toFile().exists()) {
 			throw new FileExistsException("File at " + fullPath.toString() + " already exists");
 		}
@@ -117,7 +117,7 @@ public class StoredFileDao {
 	}
 
 	public Path getActualPath(StoredFile sf) {
-		Path base = config.getBasePath();
+		Path base = config.getBasePath().resolve(config.getDataPath());
 		Path full = base.resolve(sf.getPath()).resolve(sf.getName());
 		return full.normalize();
 	}

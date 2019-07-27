@@ -1,17 +1,23 @@
 package info.tonyl.fs.config;
 
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 
 @Getter
 @Configuration
+@PropertySource("file:${fs.storage.base-path}/authentication.yml")
 public class Config {
+	@Value("${fs.auth.username}")
+	private String username;
+
+	@Value("${fs.auth.password}")
+	private String password;
+
 	@Value("${fs.storage.id-length}")
 	private Integer idLength;
 
@@ -19,11 +25,8 @@ public class Config {
 	private Integer bufferSize;
 
 	@Value("${fs.storage.base-path}")
-	@Getter(AccessLevel.NONE)
 	private Path basePath;
 
-	public Path getBasePath() {
-		String userDir = System.getProperty("user.home");
-		return FileSystems.getDefault().getPath(userDir).resolve(basePath);
-	}
+	@Value("${fs.storage.data-path}")
+	private Path dataPath;
 }
