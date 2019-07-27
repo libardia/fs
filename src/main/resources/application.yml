@@ -12,8 +12,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-  security:    
-    user:      name: tonyl
+  security:
+    user:
+      name: tonyl
       password: test
 fs:
   storage:
