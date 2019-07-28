@@ -3,4 +3,4 @@ spring:
     url: jdbc:h2:${fs.storage.base-path}/prod/prod
 fs:
   storage:
-    data-path: prod\\data
+    data-path: prod/data
