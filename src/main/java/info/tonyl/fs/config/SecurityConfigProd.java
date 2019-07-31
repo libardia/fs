@@ -22,14 +22,21 @@ public class SecurityConfigProd extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
+		// Use basic authentication
 		http.httpBasic();
+		// Allow anyone to connect to /download/* without authenticating, but any other
+		// endpoint should be secured
 		http.authorizeRequests().antMatchers("/download/*").permitAll().anyRequest().authenticated();
+		// Never use a session -- credentials are required every call
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		// Disable Cross Site Request Forgery protection
 		http.csrf().disable();
 	}
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		// Take the username and password from the properties to use for the basic
+		// authentication. The password is set using an encoder for added security.
 		auth.inMemoryAuthentication().withUser(config.getUsername()).password(encoder.encode(config.getPassword()))
 				.roles("USER");
 	}

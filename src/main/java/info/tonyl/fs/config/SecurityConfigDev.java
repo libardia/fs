@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class SecurityConfigDev extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) {
+		// No security for any request
 		web.ignoring().anyRequest();
 	}
 }
