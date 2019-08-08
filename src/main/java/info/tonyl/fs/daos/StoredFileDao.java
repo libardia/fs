@@ -43,20 +43,20 @@ public class StoredFileDao {
 
 		// Build partial and full paths, and make sure they're sensible (normalized)
 		Path semiPath = FileSystems.getDefault().getPath(path).normalize();
-		Path fullPath = semiPath.resolve(file.getOriginalFilename()).normalize();
-		Path actualPath = config.getBasePath().resolve(config.getDataPath()).resolve(fullPath).normalize();
+		Path semiWithFilename = semiPath.resolve(file.getOriginalFilename()).normalize();
+		Path actualPath = config.getFullDataPath().resolve(semiWithFilename).normalize();
 		if (actualPath.toFile().exists()) {
-			throw new FileExistsException("File at " + fullPath.toString() + " already exists");
+			throw new FileExistsException("File at " + semiWithFilename.toString() + " already exists");
 		}
 
 		// Set all the simple fields
-		sf.setName(fullPath.getFileName().toString());
+		sf.setName(semiWithFilename.getFileName().toString());
 		sf.setPath(semiPath.toString());
 		sf.setSize(file.getSize());
 		sf.setStored(OffsetDateTime.now().toString());
 
 		// Make the ID based on the full path of the file (so we can't overwrite)
-		byte[] nameHash = digest.digest(fullPath.toString().getBytes());
+		byte[] nameHash = digest.digest(semiWithFilename.toString().getBytes());
 		sf.setId(encoder.encodeToString(nameHash).substring(0, config.getIdLength() - 1));
 
 		// Write the actual file to the file system, and at the same time calculate the
@@ -85,7 +85,7 @@ public class StoredFileDao {
 
 	public void deleteAll() {
 		sfRepo.deleteAll();
-		Util.deleteDirectory(config.getBasePath().toFile());
+		Util.deleteDirectory(config.getFullDataPath().toFile());
 	}
 
 	public boolean delete(String id) {
@@ -117,8 +117,7 @@ public class StoredFileDao {
 	}
 
 	public Path getActualPath(StoredFile sf) {
-		Path base = config.getBasePath().resolve(config.getDataPath());
-		Path full = base.resolve(sf.getPath()).resolve(sf.getName());
+		Path full = config.getFullDataPath().resolve(sf.getName());
 		return full.normalize();
 	}
 }

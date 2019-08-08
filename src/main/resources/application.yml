@@ -12,8 +12,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  datasource:
+    url: jdbc:h2:${fs.storage.base-path}/${fs.storage.profile-path}/db
 fs:
   storage:
     id-length: 10
     base-path: ${user.home}/fs
+    profile-path: ${spring.profiles.active}
+    data-path: data
     buffer-size: 10240

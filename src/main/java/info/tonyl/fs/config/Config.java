@@ -27,6 +27,17 @@ public class Config {
 	@Value("${fs.storage.base-path}")
 	private Path basePath;
 
+	@Value("${fs.storage.profile-path}")
+	private Path profilePath;
+
 	@Value("${fs.storage.data-path}")
 	private Path dataPath;
+
+	public Path getFullProfilePath() {
+		return basePath.resolve(profilePath).normalize();
+	}
+
+	public Path getFullDataPath() {
+		return basePath.resolve(profilePath).resolve(dataPath).normalize();
+	}
 }

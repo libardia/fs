@@ -1,6 +1,0 @@
-spring:
-  datasource:
-    url: jdbc:h2:${fs.storage.base-path}/dev/dev
-fs:
-  storage:
-    data-path: dev/data
