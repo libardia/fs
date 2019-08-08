@@ -21,3 +21,4 @@ fs:
     profile-path: ${spring.profiles.active}
     data-path: data
     buffer-size: 10240
+    download-url: fs.tonyl.info/download

@@ -12,6 +12,9 @@ import lombok.Getter;
 @Configuration
 @PropertySource("file:${fs.storage.base-path}/authentication.yml")
 public class Config {
+	@Value("${fs.storage.download-url}")
+	private String downloadUrl;
+
 	@Value("${fs.auth.username}")
 	private String username;
 

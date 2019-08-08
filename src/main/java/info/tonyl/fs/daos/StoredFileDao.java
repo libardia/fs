@@ -59,6 +59,9 @@ public class StoredFileDao {
 		byte[] nameHash = digest.digest(semiWithFilename.toString().getBytes());
 		sf.setId(encoder.encodeToString(nameHash).substring(0, config.getIdLength() - 1));
 
+		// Set the link because we have the id now
+		sf.setLink(config.getDownloadUrl() + "/" + sf.getId());
+
 		// Write the actual file to the file system, and at the same time calculate the
 		// hash
 		InputStream in = file.getInputStream();
