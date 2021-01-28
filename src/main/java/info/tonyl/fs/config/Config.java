@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @Configuration
-@PropertySource("file:${fs.storage.base-path}/authentication.yml")
+@PropertySource(value = "file:${fs.storage.base-path}/authentication.yml", factory = YmlPropertySourceFactory.class)
 public class Config {
 	@Value("${fs.storage.download-url}")
 	private String downloadUrl;
