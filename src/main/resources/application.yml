@@ -1,32 +1,30 @@
 spring:
-  servlet:
-    multipart:
-      max-file-size: 10GB
-      max-request-size: 10GB
-  h2:
-    console:
-      enabled: true
-  http:
-    converters:
-      preferred-json-mapper: gson
-  jpa:
-    hibernate:
-      ddl-auto: update
-  datasource:
-    url: jdbc:h2:${fs.storage.base-path}/${fs.storage.profile-path}/db
+   servlet:
+      multipart:
+         max-file-size: 10GB
+         max-request-size: 10GB
+   h2:
+      console:
+         enabled: true
+   http:
+      converters:
+         preferred-json-mapper: gson
+   jpa:
+      hibernate:
+         ddl-auto: update
+   datasource:
+      url: jdbc:h2:${fs.storage.base-path}/${fs.storage.profile-path}/db
 server:
    port: 443
    ssl:
       key-store: ${fs.storage.base-path}/cert/fs-keystore.p12
       key-store-password: password
       key-store-type: PKCS12
-      #key-alias: fs
-      #key-password: password
 fs:
-  storage:
-    id-length: 10
-    base-path: ${user.home}/fs
-    profile-path: ${spring.profiles.active}
-    data-path: data
-    buffer-size: 10240
-    download-url: fs.tonyl.info/download
+   storage:
+      id-length: 10
+      base-path: ${user.home}/fs
+      profile-path: ${spring.profiles.active}
+      data-path: data
+      buffer-size: 10240
+      download-url: fs.tonyl.io/download
