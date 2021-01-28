@@ -14,6 +14,13 @@ spring:
       ddl-auto: update
   datasource:
     url: jdbc:h2:${fs.storage.base-path}/${fs.storage.profile-path}/db
+server:
+   ssl:
+      key-store: ${fs.storage.base-path}/cert/fs-keystore.p12
+      key-store-password: password
+      key-store-type: pkcs12
+      key-alias: fs
+      key-password: password
 fs:
   storage:
     id-length: 10
