@@ -24,6 +24,8 @@ public class SecurityConfigProd extends WebSecurityConfigurerAdapter {
 	public void configure(HttpSecurity http) throws Exception {
 		// Use basic authentication
 		http.httpBasic();
+		// Require HTTPS
+		http.requiresChannel().anyRequest().requiresSecure();
 		// Allow anyone to connect to /download/* without authenticating, but any other
 		// endpoint should be secured
 		http.authorizeRequests().antMatchers("/download/*").permitAll().anyRequest().authenticated();
