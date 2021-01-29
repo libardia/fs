@@ -1,0 +1,5 @@
+#!/bin/bash
+
+sudo java -Dspring.profiles.active=prod -jar ./target/*.jar
+
+
