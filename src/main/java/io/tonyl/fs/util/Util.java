@@ -3,6 +3,10 @@ package io.tonyl.fs.util;
 import java.io.File;
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+
 public class Util {
 	private Util() {
 	}
@@ -25,5 +29,9 @@ public class Util {
 	public static boolean createFile(File f) throws IOException {
 		f.getParentFile().mkdirs();
 		return f.createNewFile();
+	}
+
+	public static void logAction(Logger log, HttpServletRequest request) {
+		log.info("REQUEST RECIEVED: {} [from {}]", request.getRequestURI(), request.getRemoteAddr());
 	}
 }

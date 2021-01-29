@@ -4,6 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -27,20 +31,26 @@ import io.tonyl.fs.models.StoredFile;
 import io.tonyl.fs.responses.ErrorResponse;
 import io.tonyl.fs.responses.ListResponse;
 import io.tonyl.fs.responses.SimpleResponse;
+import io.tonyl.fs.util.Util;
 
 @RestController
 public class FileController {
 	@Autowired
 	private StoredFileDao sfDao;
 
+	private static final Logger log = LoggerFactory.getLogger(FileController.class);
+
 	@GetMapping("list")
-	public ListResponse list() {
+	public ListResponse list(HttpServletRequest request) {
+		Util.logAction(log, request);
 		return new ListResponse(sfDao.getAll());
 	}
 
 	@PostMapping("upload")
 	public StoredFile uploadFile(@RequestParam("file") MultipartFile file,
-			@RequestParam(value = "path", required = false) String path) throws IOException {
+			@RequestParam(value = "path", required = false) String path, HttpServletRequest request)
+			throws IOException {
+		Util.logAction(log, request);
 		if (path == null) {
 			path = "";
 		}
@@ -54,7 +64,9 @@ public class FileController {
 	}
 
 	@GetMapping("download/{id}")
-	public ResponseEntity<Resource> download(@PathVariable String id) throws FileNotFoundException {
+	public ResponseEntity<Resource> download(@PathVariable String id, HttpServletRequest request)
+			throws FileNotFoundException {
+		Util.logAction(log, request);
 		StoredFile sf = sfDao.get(id);
 		if (sf == null) {
 			throw new FileNotFoundException("No entry for ID " + id);
@@ -67,7 +79,8 @@ public class FileController {
 	}
 
 	@GetMapping("file-details/{id}")
-	public StoredFile fileDetails(@PathVariable String id) throws FileNotFoundException {
+	public StoredFile fileDetails(@PathVariable String id, HttpServletRequest request) throws FileNotFoundException {
+		Util.logAction(log, request);
 		StoredFile sf = sfDao.get(id);
 		if (sf == null) {
 			throw new FileNotFoundException("No entry for ID " + id);
@@ -76,13 +89,15 @@ public class FileController {
 	}
 
 	@GetMapping("deleteAll")
-	public SimpleResponse deleteAll() {
+	public SimpleResponse deleteAll(HttpServletRequest request) {
+		Util.logAction(log, request);
 		sfDao.deleteAll();
 		return new SimpleResponse("It is done.");
 	}
 
 	@GetMapping("delete/{id}")
-	public SimpleResponse delete(@PathVariable String id) {
+	public SimpleResponse delete(@PathVariable String id, HttpServletRequest request) {
+		Util.logAction(log, request);
 		String message;
 		if (sfDao.delete(id)) {
 			message = "Successfully deleted file with ID " + id;
