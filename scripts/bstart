@@ -1,5 +1,5 @@
 #!/bin/bash
 
 mvn clean package -DskipTests
-sudo java -Dspring.profiles.active=prod -jar ./target/*.jar
+sudo java -Dspring.profiles.active=prod -jar ./target/*.jar &
 

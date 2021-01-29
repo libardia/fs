@@ -1,8 +1,6 @@
 #!/bin/bash
 
-hostname=localhost:8080
-
-resp=`curl -NF "file=@$1" $hostname/upload`
+resp=`curl -NF "file=@$1" https://fs.tonyl.io/upload`
 echo
-echo $resp | ../bin/jq .
+echo $resp
 
