@@ -23,11 +23,11 @@ public class SecurityConfigProd extends WebSecurityConfigurerAdapter {
 	@Autowired
 	PasswordEncoder encoder;
 
-	@Bean
-	SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-		http.redirectToHttps();
-		return http.build();
-	}
+//	@Bean
+//	SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+//		http.redirectToHttps();
+//		return http.build();
+//	}
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
