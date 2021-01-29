@@ -17,7 +17,7 @@ spring:
 server:
    port: 443
 logging:
-   file: ${fs.storage.base-path}/${fs.storage.profile-path}/fs.log
+   file: ${fs.storage.base-path}/${fs.storage.profile-path}/logs/fs.log
 fs:
    storage:
       id-length: 10
