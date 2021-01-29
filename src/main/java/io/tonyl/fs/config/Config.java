@@ -1,4 +1,4 @@
-package info.tonyl.fs.config;
+package io.tonyl.fs.config;
 
 import java.nio.file.Path;
 

@@ -1,8 +1,8 @@
-package info.tonyl.fs.responses;
+package io.tonyl.fs.responses;
 
 import java.util.List;
 
-import info.tonyl.fs.models.StoredFile;
+import io.tonyl.fs.models.StoredFile;
 import lombok.Data;
 
 @Data

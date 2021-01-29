@@ -1,4 +1,4 @@
-package info.tonyl.fs.models;
+package io.tonyl.fs.models;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

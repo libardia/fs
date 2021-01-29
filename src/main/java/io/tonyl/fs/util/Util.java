@@ -1,4 +1,4 @@
-package info.tonyl.fs.util;
+package io.tonyl.fs.util;
 
 import java.io.File;
 import java.io.IOException;

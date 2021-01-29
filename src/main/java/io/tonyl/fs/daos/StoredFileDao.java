@@ -1,4 +1,4 @@
-package info.tonyl.fs.daos;
+package io.tonyl.fs.daos;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,11 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import info.tonyl.fs.config.Config;
-import info.tonyl.fs.exceptions.FileExistsException;
-import info.tonyl.fs.models.StoredFile;
-import info.tonyl.fs.repos.StoredFileRepo;
-import info.tonyl.fs.util.Util;
+import io.tonyl.fs.config.Config;
+import io.tonyl.fs.exceptions.FileExistsException;
+import io.tonyl.fs.models.StoredFile;
+import io.tonyl.fs.repos.StoredFileRepo;
+import io.tonyl.fs.util.Util;
 
 @Component
 public class StoredFileDao {

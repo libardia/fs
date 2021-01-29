@@ -1,4 +1,4 @@
-package info.tonyl.fs.config;
+package io.tonyl.fs.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package info.tonyl.fs.config;
+package io.tonyl.fs.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;

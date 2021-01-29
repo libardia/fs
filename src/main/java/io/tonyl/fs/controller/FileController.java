@@ -1,4 +1,4 @@
-package info.tonyl.fs.controller;
+package io.tonyl.fs.controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
-import info.tonyl.fs.daos.StoredFileDao;
-import info.tonyl.fs.exceptions.FileExistsException;
-import info.tonyl.fs.models.StoredFile;
-import info.tonyl.fs.responses.ErrorResponse;
-import info.tonyl.fs.responses.ListResponse;
-import info.tonyl.fs.responses.SimpleResponse;
+import io.tonyl.fs.daos.StoredFileDao;
+import io.tonyl.fs.exceptions.FileExistsException;
+import io.tonyl.fs.models.StoredFile;
+import io.tonyl.fs.responses.ErrorResponse;
+import io.tonyl.fs.responses.ListResponse;
+import io.tonyl.fs.responses.SimpleResponse;
 
 @RestController
 public class FileController {

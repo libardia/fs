@@ -1,4 +1,4 @@
-package info.tonyl.fs.responses;
+package io.tonyl.fs.responses;
 
 import lombok.Data;
 
