@@ -88,7 +88,7 @@ public class StoredFileDao {
 
 	public void deleteAll() {
 		sfRepo.deleteAll();
-		Util.deleteDirectory(config.getFullDataPath().toFile());
+		Util.deleteDirectory(config.getFullDataPath());
 	}
 
 	public boolean delete(String id) {
@@ -96,6 +96,7 @@ public class StoredFileDao {
 		boolean actuallyDeleted = false;
 		if (sf != null) {
 			actuallyDeleted = getActualPath(sf).toFile().delete();
+			Util.cleanEmptyDirs(config.getFullDataPath());
 		}
 		sfRepo.deleteById(id);
 		return actuallyDeleted;
