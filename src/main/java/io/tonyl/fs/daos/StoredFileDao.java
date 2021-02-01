@@ -120,7 +120,7 @@ public class StoredFileDao {
 	}
 
 	public Path getActualPath(StoredFile sf) {
-		Path full = config.getFullDataPath().resolve(sf.getName());
+		Path full = config.getFullDataPath().resolve(sf.getPath()).resolve(sf.getName());
 		return full.normalize();
 	}
 }
